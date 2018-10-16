@@ -9,7 +9,8 @@ import (
 type Compositor struct {
 	Zbuffer map[int][]WindowID
 	Windows map[WindowID]Drawable
-	win *pixelgl.Window
+	win     *pixelgl.Window
+	Dnd     DragNDrop
 }
 
 type WindowID int
@@ -80,6 +81,51 @@ func NewCompositor(win *pixelgl.Window) Compositor {
 	return Compositor {
 		Zbuffer: map[int][]WindowID{},
 		Windows: map[WindowID]Drawable{},
-		win: win,
+		win:     win,
+		Dnd:     DragNDrop{Initiated: false},
+	}
+}
+
+func (c *Compositor) GetWindowAt(vec pixel.Vec) *RichWindow {
+	res := map[int]*RichWindow{}
+
+	for _, window := range c.Windows {
+		if rw, ok := window.(*RichWindow); ok {
+			if rw.GetBoundaries().Contains(vec) {
+				res[rw.Zindex] = rw
+			}
+		}
+	}
+
+	keys := make([]int, len(res), len(res))
+	i := 0
+	for zindex := range res {
+		keys[i] = zindex
+		i++
+	}
+	sort.Ints(keys)
+
+	if len(keys) != 0 {
+		return res[keys[len(keys) - 1]]
+	}
+
+	return nil
+}
+
+func (c *Compositor) CheckButtons() {
+	if !c.win.JustReleased(pixelgl.MouseButtonLeft) {
+		return
+	}
+
+	pos := c.win.MousePosition()
+	activeWindow := c.GetWindowAt(pos)
+
+	if activeWindow != nil {
+		for _, child := range activeWindow.Children {
+			if child.GetBoundaries().Contains(pos) {
+				go child.Click(pos.X, pos.Y)
+				return
+			}
+		}
 	}
 }

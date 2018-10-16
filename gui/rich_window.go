@@ -16,6 +16,7 @@ type RichWindow struct {
 	BaseGuiWindow
 	Title string
 	FixedPosition bool
+	Children []Clickable
 }
 
 func (m *RichWindow) Draw(w *pixelgl.Window) {
@@ -52,6 +53,26 @@ func (m *RichWindow) Draw(w *pixelgl.Window) {
 
 	imd.Draw(w)
 	basicTxt.Draw(w, pixel.IM)
+
+	//fmt.Println("window has", len(m.Children), "children")
+	for _, child := range m.Children {
+		child.Draw(w)
+	}
+}
+
+type Clickable interface {
+	Drawable
+	Click(X float64, Y float64)
+}
+
+func (w *RichWindow) GetChildAt(vec pixel.Vec) Clickable {
+	for _, child := range w.Children {
+		if child.GetBoundaries().Contains(vec) {
+			return child
+		}
+	}
+
+	return nil
 }
 
 func (w *RichWindow) GetTitleRectange() Rectangle {
@@ -59,6 +80,15 @@ func (w *RichWindow) GetTitleRectange() Rectangle {
 		w.X,
 		w.X + w.W,
 		w.Y + w.H - atlas.LineHeight() - 5,
+		w.Y + w.H,
+	}
+}
+
+func (w *RichWindow) GetBoundaries() Rectangle {
+	return Rectangle{
+		w.X,
+		w.X + w.W,
+		w.Y,
 		w.Y + w.H,
 	}
 }

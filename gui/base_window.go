@@ -9,6 +9,7 @@ type Drawable interface {
 	GetZindex() int
 	Draw(w *pixelgl.Window)
 	Move(dx float64, dy float64)
+	GetBoundaries() Rectangle
 }
 
 type BaseGuiWindow struct {
