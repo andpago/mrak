@@ -3,8 +3,11 @@ package main
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
 	"golang.org/x/image/colornames"
+	"golang.org/x/image/font/basicfont"
 	"image/color"
+	"time"
 )
 
 
@@ -13,6 +16,8 @@ var windowConfig = pixelgl.WindowConfig{
 	Bounds: pixel.R(0, 0, 800, 500),
 	VSync:  true,
 }
+
+var atlas = text.NewAtlas(basicfont.Face7x13, text.ASCII)
 
 func run() {
 
@@ -25,47 +30,25 @@ func run() {
 
 	comp := NewCompositor(win)
 
-	comp.AddWindow(MainWindow{
-		BaseGuiWindow{
-			W: windowConfig.Bounds.W(),
+	comp.AddWindow(RichWindow{
+		BaseGuiWindow: BaseGuiWindow{
+			W: windowConfig.Bounds.W() - 11,
 			H: windowConfig.Bounds.H() - 100,
-			X: 0,
+			X: 1,
 			Y: 50,
 			Bgcolor: color.RGBA{128, 128, 128, 255},
-			Bordercolor: color.RGBA{0, 0, 0, 255},
+			Bordercolor: color.RGBA{255, 0, 0, 255},
 			Zindex: 1,
 		},
-	})
-
-	comp.AddWindow(MainWindow{
-		BaseGuiWindow{
-			W: windowConfig.Bounds.W() - 300,
-			H: windowConfig.Bounds.H(),
-			X: 200,
-			Y: 0,
-			Bgcolor: color.RGBA{255, 255, 255, 255},
-			Bordercolor: color.RGBA{0, 0, 0, 255},
-			Zindex: -3,
-		},
-	})
-
-	comp.AddWindow(MainWindow{
-		BaseGuiWindow{
-			W: windowConfig.Bounds.W() - 500,
-			H: windowConfig.Bounds.H() / 10,
-			X: 500,
-			Y: 0,
-			Bgcolor: color.RGBA{255, 0, 0, 128},
-			Bordercolor: color.RGBA{0, 255, 0, 255},
-			Zindex: 0,
-		},
+		Title: "Hello World",
 	})
 
 
-	comp.DrawAllWindows()
 
 	for !win.Closed() {
+		comp.DrawAllWindows()
 		win.Update()
+		time.Sleep(40 * time.Millisecond)
 	}
 }
 
