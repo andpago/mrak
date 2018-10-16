@@ -36,14 +36,15 @@ func run() {
 
 	wid := comp.AddWindow(&RichWindow{
 		BaseGuiWindow: BaseGuiWindow{
-			W: windowConfig.Bounds.W() - 11,
-			H: windowConfig.Bounds.H() - 100,
+			W: windowConfig.Bounds.W() - 1,
+			H: windowConfig.Bounds.H(),
 			X: 1,
-			Y: 50,
+			Y: 0,
 			Bgcolor: color.RGBA{128, 128, 128, 255},
-			Bordercolor: color.RGBA{255, 0, 0, 255},
+			Bordercolor: color.RGBA{0, 0, 0, 255},
 			Zindex: 1,
 		},
+		FixedPosition: true,
 		Title: "Hello World",
 	})
 

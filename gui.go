@@ -31,6 +31,7 @@ func (b BaseGuiWindow) GetZindex() int {
 type RichWindow struct {
 	BaseGuiWindow
 	Title string
+	FixedPosition bool
 }
 
 func (m *RichWindow) Draw(w *pixelgl.Window) {
@@ -131,13 +132,13 @@ func (r Rectangle) Contains(vec pixel.Vec) bool {
 
 const NULL WindowID = -1
 
-func (c *Compositor) GetWindowTitleAt(vec pixel.Vec) WindowID {
-	res := map[int]WindowID{}
+func (c *Compositor) GetWindowTitleAt(vec pixel.Vec) *RichWindow {
+	res := map[int]*RichWindow{}
 
-	for wid, window := range c.Windows {
+	for _, window := range c.Windows {
 		if rw, ok := window.(*RichWindow); ok {
 			if rw.GetTitleRectange().Contains(vec) {
-				res[rw.Zindex] = wid
+				res[rw.Zindex] = rw
 			}
 		}
 	}
@@ -154,16 +155,12 @@ func (c *Compositor) GetWindowTitleAt(vec pixel.Vec) WindowID {
 		return res[keys[len(keys) - 1]]
 	}
 
-	return NULL
+	return nil
 }
 
 func (r* RichWindow) Move(dx float64, dy float64) {
 	r.X += dx
 	r.Y += dy
-}
-
-func (c *Compositor) MoveWindow(wid WindowID, dx float64, dy float64) {
-	c.Windows[wid].Move(dx, dy)
 }
 
 func NewCompositor(win *pixelgl.Window) Compositor {
@@ -177,19 +174,19 @@ func NewCompositor(win *pixelgl.Window) Compositor {
 type DragNDrop struct {
 	LastCoords pixel.Vec
 	Initiated bool
-	Window WindowID
+	Window *RichWindow
 }
 
 func (dnd *DragNDrop) Check(win *pixelgl.Window, comp *Compositor) {
 	pos := win.MousePosition()
 	if win.Pressed(pixelgl.MouseButtonLeft) && dnd.Initiated {
-		comp.MoveWindow(dnd.Window, pos.X - dnd.LastCoords.X, pos.Y - dnd.LastCoords.Y)
+		dnd.Window.Move(pos.X - dnd.LastCoords.X, pos.Y - dnd.LastCoords.Y)
 		dnd.LastCoords = pos
 	}
 
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		window := comp.GetWindowTitleAt(pos)
-		if window != NULL {
+		if window != nil && !window.FixedPosition {
 			dnd.Initiated = true
 			dnd.Window = window
 			dnd.LastCoords = win.MousePosition()
