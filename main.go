@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	"golang.org/x/image/colornames"
-	"golang.org/x/image/font/basicfont"
 	"image/color"
 	"time"
+	"github.com/andpago/mrak/gui"
 )
 
 
@@ -18,9 +17,7 @@ var windowConfig = pixelgl.WindowConfig{
 	VSync:  true,
 }
 
-var atlas = text.NewAtlas(basicfont.Face7x13, text.ASCII)
-
-var dnd = DragNDrop {
+var dnd = gui.DragNDrop {
 	Initiated: false,
 }
 
@@ -32,10 +29,10 @@ func run() {
 	}
 
 
-	comp := NewCompositor(win)
+	comp := gui.NewCompositor(win)
 
-	wid := comp.AddWindow(&RichWindow{
-		BaseGuiWindow: BaseGuiWindow{
+	wid := comp.AddWindow(&gui.RichWindow{
+		BaseGuiWindow: gui.BaseGuiWindow{
 			W: windowConfig.Bounds.W() - 1,
 			H: windowConfig.Bounds.H(),
 			X: 1,
