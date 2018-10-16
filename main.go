@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
@@ -19,6 +20,10 @@ var windowConfig = pixelgl.WindowConfig{
 
 var atlas = text.NewAtlas(basicfont.Face7x13, text.ASCII)
 
+var dnd = DragNDrop {
+	Initiated: false,
+}
+
 func run() {
 
 	win, err := pixelgl.NewWindow(windowConfig)
@@ -26,11 +31,10 @@ func run() {
 		panic(err)
 	}
 
-	win.Clear(colornames.Skyblue)
 
 	comp := NewCompositor(win)
 
-	comp.AddWindow(RichWindow{
+	wid := comp.AddWindow(&RichWindow{
 		BaseGuiWindow: BaseGuiWindow{
 			W: windowConfig.Bounds.W() - 11,
 			H: windowConfig.Bounds.H() - 100,
@@ -43,9 +47,13 @@ func run() {
 		Title: "Hello World",
 	})
 
-
+	fmt.Println("created window with wid =", wid)
 
 	for !win.Closed() {
+		win.Clear(colornames.Skyblue)
+
+		dnd.Check(win, &comp)
+
 		comp.DrawAllWindows()
 		win.Update()
 		time.Sleep(40 * time.Millisecond)
