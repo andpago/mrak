@@ -6,29 +6,47 @@ import (
 	"golang.org/x/image/colornames"
 	"image"
 	"image/color"
+	"sync"
 )
+
+type ProtectedColorBuffer struct {
+	Colors [][]color.Color
+	Mu     *sync.Mutex
+}
+
+
+func NewProtectedColorBuffer(W int, H int, defaultColor color.Color) *ProtectedColorBuffer {
+	res := &ProtectedColorBuffer{
+		Colors: make([][]color.Color, H, H),
+		Mu:     &sync.Mutex{},
+	}
+
+	for y := 0; y < H; y++ {
+		res.Colors[y] = make([]color.Color, W, W)
+		for x := 0; x < W; x++ {
+			res.Colors[y][x] = defaultColor
+		}
+	}
+
+	return res
+}
 
 type Canvas struct {
 	X, Y float64
 	W, H float64
-	Colors [][]color.Color
+	Colors *ProtectedColorBuffer
 	Zindex int
 	Parent *RichWindow
 }
 
-func NewCanvas(parent *RichWindow) *Canvas {
+func NewCanvas(parent *RichWindow, W, H int) *Canvas {
 	res := &Canvas {
-		0, 0, 300, 300,
-		make([][]color.Color, 300, 300),
-		1,
-		parent,
+		X:0, Y: 0, W: float64(W), H: float64(H),
+		Zindex: 1,
+		Parent: parent,
 	}
-	for y := 0; y < 300; y++ {
-		res.Colors[y] = make([]color.Color, 300, 300)
-		for x := 0; x < 300; x++ {
-			res.Colors[y][x] = colornames.Blue
-		}
-	}
+
+	res.Colors = NewProtectedColorBuffer(int(res.W), int(res.H), colornames.White)
 
 	return res
 }
@@ -43,11 +61,13 @@ func (c *Canvas) Draw(w *pixelgl.Window) {
 	dx := c.Parent.X + c.X + c.W / 2
 	dy := c.Parent.Y + c.Y + c.H / 2
 
+	c.Colors.Mu.Lock()
 	for y := 0; y < int(c.H); y++ {
 		for x := 0; x < int(c.W); x++ {
-			m.Set(x, y, c.Colors[y][x])
+			m.Set(x, y, c.Colors.Colors[y][x])
 		}
 	}
+	c.Colors.Mu.Unlock()
 
 	p := pixel.PictureDataFromImage(m)
 	pixel.NewSprite(p, p.Bounds()).Draw(w, pixel.IM.Moved(pixel.Vec{dx, dy}))
