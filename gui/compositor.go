@@ -122,7 +122,7 @@ func (c *Compositor) CheckButtons() {
 
 	if activeWindow != nil {
 		for _, child := range activeWindow.Children {
-			if child.GetBoundaries().Contains(pos) {
+			if child.GetBoundaries().Contains(pixel.Vec{X: pos.X - activeWindow.X, Y: pos.Y - activeWindow.Y}) {
 				go child.Click(pos.X, pos.Y)
 				return
 			}
