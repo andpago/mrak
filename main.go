@@ -17,6 +17,24 @@ var windowConfig = pixelgl.WindowConfig{
 	VSync:  true,
 }
 
+const (
+	MODE_MAIN_MENU = iota
+	MODE_WORLDGEN = iota
+)
+
+var modeChange = make(chan interface{}, 1)
+
+func changeMode(comp *gui.Compositor, mode int) {
+	fmt.Println("game mode changed to", mode)
+	comp.DestroyAllWindows()
+	switch mode {
+	case MODE_MAIN_MENU:
+		gui_menus.CreateMainMenu(&windowConfig, comp, modeChange)
+	case MODE_WORLDGEN:
+		gui_menus.CreateWorldGenMenu(&windowConfig, comp, modeChange)
+	}
+}
+
 func run() {
 
 	win, err := pixelgl.NewWindow(windowConfig)
@@ -26,10 +44,7 @@ func run() {
 
 
 	comp := gui.NewCompositor(win)
-
-	_, wid := gui_menus.CreateMainMenu(&windowConfig, &comp)
-
-	fmt.Println("created window with wid =", wid)
+	changeMode(&comp, MODE_MAIN_MENU)
 
 	for !win.Closed() {
 		win.Clear(colornames.Skyblue)
@@ -39,6 +54,18 @@ func run() {
 
 		comp.DrawAllWindows()
 		win.Update()
+
+		select {
+			case modeRead := <-modeChange:
+				if newMode, ok := modeRead.(int); ok {
+					changeMode(&comp, newMode)
+				} else {
+					fmt.Println("fail")
+				}
+			default:
+
+		}
+
 		time.Sleep(40 * time.Millisecond)
 	}
 }

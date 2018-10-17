@@ -13,6 +13,11 @@ type Compositor struct {
 	Dnd     DragNDrop
 }
 
+func (c *Compositor) DestroyAllWindows() {
+	c.Windows = map[WindowID]Drawable{}
+	c.Zbuffer = map[int][]WindowID{}
+}
+
 type WindowID int
 var currWid WindowID = 0
 
@@ -55,7 +60,7 @@ func (c *Compositor) GetWindowTitleAt(vec pixel.Vec) *RichWindow {
 
 	for _, window := range c.Windows {
 		if rw, ok := window.(*RichWindow); ok {
-			if rw.GetTitleRectange().Contains(vec) {
+			if rw.GetTitleRectangle().Contains(vec) {
 				res[rw.Zindex] = rw
 			}
 		}

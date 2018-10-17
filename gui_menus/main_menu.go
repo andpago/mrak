@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func CreateMainMenu(config *pixelgl.WindowConfig, comp *gui.Compositor) (mwin *gui.RichWindow, wid gui.WindowID) {
+func CreateMainMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, switchWindowChannel chan interface{}) (mwin *gui.RichWindow, wid gui.WindowID) {
 	mwin = &gui.RichWindow{
 		BaseGuiWindow: gui.BaseGuiWindow{
 			W: config.Bounds.W() - 1,
@@ -31,9 +31,10 @@ func CreateMainMenu(config *pixelgl.WindowConfig, comp *gui.Compositor) (mwin *g
 		colornames.Black,
 		10,
 		mwin,
-		func() {
+		func(w chan interface{}) {
 			fmt.Println("Not implemented")
 		},
+		make(chan interface{}),
 	})
 
 	mwin.Children = append(mwin.Children, &gui.Button{
@@ -42,9 +43,10 @@ func CreateMainMenu(config *pixelgl.WindowConfig, comp *gui.Compositor) (mwin *g
 		colornames.Black,
 		10,
 		mwin,
-		func() {
-			fmt.Println("Not implemented")
+		func(w chan interface{}) {
+			w <- 1
 		},
+		switchWindowChannel,
 	})
 
 	mwin.Children = append(mwin.Children, &gui.Button{
@@ -53,9 +55,10 @@ func CreateMainMenu(config *pixelgl.WindowConfig, comp *gui.Compositor) (mwin *g
 		colornames.Black,
 		10,
 		mwin,
-		func() {
+		func(w chan interface{}) {
 			os.Exit(0)
 		},
+		make(chan interface{}),
 	})
 
 	return mwin, wid

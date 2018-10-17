@@ -46,9 +46,12 @@ func (m *RichWindow) Draw(w *pixelgl.Window) {
 
 	// title underline
 	imd.Color = m.Bordercolor
-	imd.Push(pixel.V(m.X, m.Y + m.H - lineHeight - 5))
-	imd.Push(pixel.V(m.X + m.W, m.Y + m.H - lineHeight - 5))
-	imd.Line(1)
+	titleArea := m.GetTitleRectangle()
+	imd.Push(pixel.V(titleArea.X1, titleArea.Y1))
+	imd.Push(pixel.V(titleArea.X1, titleArea.Y2))
+	imd.Push(pixel.V(titleArea.X2, titleArea.Y2))
+	imd.Push(pixel.V(titleArea.X2, titleArea.Y1))
+	imd.Polygon(0)
 
 
 	imd.Draw(w)
@@ -75,7 +78,7 @@ func (w *RichWindow) GetChildAt(vec pixel.Vec) Clickable {
 	return nil
 }
 
-func (w *RichWindow) GetTitleRectange() Rectangle {
+func (w *RichWindow) GetTitleRectangle() Rectangle {
 	return Rectangle{
 		w.X,
 		w.X + w.W,

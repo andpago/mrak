@@ -10,7 +10,8 @@ import (
 	"math"
 )
 
-type Action func()
+type ResultChan chan interface{}
+type Action func(w chan interface{})
 
 type Button struct {
 	X, Y, W, H float64
@@ -19,10 +20,11 @@ type Button struct {
 	Zindex int
 	Parent *RichWindow
 	Callback Action
+	ResultChan ResultChan
 }
 
 func (b *Button) Click(X float64, Y float64) {
-	b.Callback()
+	b.Callback(b.ResultChan)
 }
 
 func (b *Button) GetBoundaries() Rectangle {
