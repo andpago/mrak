@@ -8,6 +8,7 @@ import (
 	"github.com/faiface/pixel/text"
 	"golang.org/x/image/font/basicfont"
 	"math"
+	"sort"
 )
 
 var atlas = text.NewAtlas(basicfont.Face7x13, text.ASCII)
@@ -57,9 +58,29 @@ func (m *RichWindow) Draw(w *pixelgl.Window) {
 	imd.Draw(w)
 	basicTxt.Draw(w, pixel.IM)
 
-	//fmt.Println("window has", len(m.Children), "children")
-	for _, child := range m.Children {
-		child.Draw(w)
+	// draw children layer by layer
+	zToInd := map[int][]int{}
+	for i, child := range m.Children {
+		idx := child.GetZindex()
+
+		if _, ok := zToInd[idx]; ok {
+			zToInd[idx] = append(zToInd[idx], i)
+		} else {
+			zToInd[idx] = []int{i}
+		}
+	}
+	zIndices := make([]int, len(zToInd), len(zToInd))
+	i := 0
+	for z := range zToInd {
+		zIndices[i] = z
+		i++
+	}
+	sort.Ints(zIndices)
+
+	for _, z := range zIndices {
+		for _, idx := range zToInd[z] {
+			m.Children[idx].Draw(w)
+		}
 	}
 }
 
