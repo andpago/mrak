@@ -36,7 +36,10 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		},
 		switchWindowChannel,
 	})
-	canvas := gui.NewCanvas(mwin, int(config.Bounds.W()), int(config.Bounds.H()) - 20)
+
+	h := int(config.Bounds.H()) - int(mwin.GetTitleRectangle().Y2 - mwin.GetTitleRectangle().Y1)
+	canvas := gui.NewCanvas(mwin, h, h)
+	canvas.X = config.Bounds.W() - canvas.W
 
 	mwin.Children = append(mwin.Children, &gui.Button{
 		110, 0, 100, 30,
