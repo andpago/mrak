@@ -8,12 +8,12 @@ import (
 type Drawable interface {
 	GetZindex() int
 	Draw(w *pixelgl.Window)
-	Move(dx float64, dy float64)
+	Move(dx int, dy int)
 	GetBoundaries() Rectangle
 }
 
 type BaseGuiWindow struct {
-	X, Y, W, H float64
+	X, Y, W, H int
 	Bgcolor color.Color
 	Bordercolor color.Color
 	Zindex int

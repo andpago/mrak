@@ -11,8 +11,8 @@ import (
 func CreateMainMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, switchWindowChannel chan interface{}) (mwin *gui.RichWindow, wid gui.WindowID) {
 	mwin = &gui.RichWindow{
 		BaseGuiWindow: gui.BaseGuiWindow{
-			W: config.Bounds.W() - 1,
-			H: config.Bounds.H(),
+			W: int(config.Bounds.W()) - 1,
+			H: int(config.Bounds.H()),
 			X: 1,
 			Y: 0,
 			Bgcolor: colornames.Gray,

@@ -32,8 +32,8 @@ func NewProtectedColorBuffer(W int, H int, defaultColor color.Color) *ProtectedC
 }
 
 type Canvas struct {
-	X, Y float64
-	W, H float64
+	X, Y int
+	W, H int
 	Colors *ProtectedColorBuffer
 	Zindex int
 	Parent *RichWindow
@@ -41,7 +41,7 @@ type Canvas struct {
 
 func NewCanvas(parent *RichWindow, W, H int) *Canvas {
 	res := &Canvas {
-		X:0, Y: 0, W: float64(W), H: float64(H),
+		X:0, Y: 0, W: W, H: H,
 		Zindex: 1,
 		Parent: parent,
 	}
@@ -70,11 +70,11 @@ func (c *Canvas) Draw(w *pixelgl.Window) {
 	c.Colors.Mu.Unlock()
 
 	p := pixel.PictureDataFromImage(m)
-	pixel.NewSprite(p, p.Bounds()).Draw(w, pixel.IM.Moved(pixel.Vec{dx, dy}))
+	pixel.NewSprite(p, p.Bounds()).Draw(w, pixel.IM.Moved(pV(dx, dy)))
 
 }
 
-func (c *Canvas) Move(dx float64, dy float64) {
+func (c *Canvas) Move(dx int, dy int) {
 	c.X += dx
 	c.Y += dy
 }

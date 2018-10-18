@@ -7,7 +7,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"golang.org/x/image/font/basicfont"
-	"math"
 	"sort"
 )
 
@@ -20,38 +19,43 @@ type RichWindow struct {
 	Children []Clickable
 }
 
+func (w *RichWindow) Move(dx, dy int) {
+	w.X += dx
+	w.Y += dy
+}
+
 func (m *RichWindow) Draw(w *pixelgl.Window) {
 	imd := imdraw.New(nil)
 
 	//draw background
 	imd.Color = m.Bgcolor
-	imd.Push(pixel.V(m.X, m.Y))
-	imd.Push(pixel.V(m.X + m.W, m.Y))
-	imd.Push(pixel.V(m.X + m.W, m.Y + m.H))
-	imd.Push(pixel.V(m.X, m.Y + m.H))
+	imd.Push(pV(m.X, m.Y))
+	imd.Push(pV(m.X + m.W, m.Y))
+	imd.Push(pV(m.X + m.W, m.Y + m.H))
+	imd.Push(pV(m.X, m.Y + m.H))
 	imd.Polygon(0)
 
 	// draw border
 	imd.Color = m.Bordercolor
-	imd.Push(pixel.V(m.X, m.Y))
-	imd.Push(pixel.V(m.X + m.W, m.Y))
-	imd.Push(pixel.V(m.X + m.W, m.Y + m.H))
-	imd.Push(pixel.V(m.X, m.Y + m.H))
+	imd.Push(pV(m.X, m.Y))
+	imd.Push(pV(m.X + m.W, m.Y))
+	imd.Push(pV(m.X + m.W, m.Y + m.H))
+	imd.Push(pV(m.X, m.Y + m.H))
 	imd.Polygon(1)
 
 	// draw title
-	lineHeight := atlas.LineHeight()
-	basicTxt := text.New(pixel.V(math.Floor(m.X + m.W / 2), m.Y + m.H - lineHeight), atlas)
+	lineHeight := int(atlas.LineHeight())
+	basicTxt := text.New(pV(m.X + m.W / 2, m.Y + m.H - lineHeight), atlas)
 	basicTxt.Dot.X -= basicTxt.BoundsOf(m.Title).W() / 2
 	fmt.Fprint(basicTxt, m.Title)
 
 	// title underline
 	imd.Color = m.Bordercolor
 	titleArea := m.GetTitleRectangle()
-	imd.Push(pixel.V(titleArea.X1, titleArea.Y1))
-	imd.Push(pixel.V(titleArea.X1, titleArea.Y2))
-	imd.Push(pixel.V(titleArea.X2, titleArea.Y2))
-	imd.Push(pixel.V(titleArea.X2, titleArea.Y1))
+	imd.Push(pV(titleArea.X1, titleArea.Y1))
+	imd.Push(pV(titleArea.X1, titleArea.Y2))
+	imd.Push(pV(titleArea.X2, titleArea.Y2))
+	imd.Push(pV(titleArea.X2, titleArea.Y1))
 	imd.Polygon(0)
 
 
@@ -103,7 +107,7 @@ func (w *RichWindow) GetTitleRectangle() Rectangle {
 	return Rectangle{
 		w.X,
 		w.X + w.W,
-		w.Y + w.H - atlas.LineHeight() - 5,
+		w.Y + w.H - int(atlas.LineHeight()) - 5,
 		w.Y + w.H,
 	}
 }
@@ -118,9 +122,9 @@ func (w *RichWindow) GetBoundaries() Rectangle {
 }
 
 type Rectangle struct {
-	X1, X2, Y1, Y2 float64
+	X1, X2, Y1, Y2 int
 }
 
 func (r Rectangle) Contains(vec pixel.Vec) bool {
-	return (vec.X <= r.X2) && (vec.X >= r.X1) && (vec.Y <= r.Y2) && (vec.Y >= r.Y1)
+	return (vec.X <= float64(r.X2)) && (vec.X >= float64(r.X1)) && (vec.Y <= float64(r.Y2)) && (vec.Y >= float64(r.Y1))
 }

@@ -5,11 +5,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 )
 
-func (r* RichWindow) Move(dx float64, dy float64) {
-	r.X += dx
-	r.Y += dy
-}
-
 
 type DragNDrop struct {
 	LastCoords pixel.Vec
@@ -20,7 +15,7 @@ type DragNDrop struct {
 func (dnd *DragNDrop) Check(win *pixelgl.Window, comp *Compositor) {
 	pos := win.MousePosition()
 	if win.Pressed(pixelgl.MouseButtonLeft) && dnd.Initiated {
-		dnd.Window.Move(pos.X - dnd.LastCoords.X, pos.Y - dnd.LastCoords.Y)
+		dnd.Window.Move(int(pos.X - dnd.LastCoords.X), int(pos.Y - dnd.LastCoords.Y))
 		dnd.LastCoords = pos
 	}
 

@@ -7,14 +7,13 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"image/color"
-	"math"
 )
 
 type ResultChan chan interface{}
 type Action func(w chan interface{})
 
 type Button struct {
-	X, Y, W, H float64
+	X, Y, W, H int
 	Text string
 	BgColor color.Color
 	Zindex int
@@ -37,6 +36,10 @@ func (b *Button) GetZindex() int {
 	return b.Zindex
 }
 
+func pV(x, y int) pixel.Vec {
+	return pixel.V(float64(x), float64(y))
+}
+
 func (b *Button) Draw(w *pixelgl.Window) {
 	imd := imdraw.New(nil)
 	
@@ -45,15 +48,15 @@ func (b *Button) Draw(w *pixelgl.Window) {
 	dx := b.Parent.X
 	dy := b.Parent.Y
 
-	imd.Push(pixel.V(b.X + dx, b.Y + dy))
-	imd.Push(pixel.V(b.X + dx + b.W, b.Y + dy))
-	imd.Push(pixel.V(b.X + dx + b.W, b.Y + dy + b.H))
-	imd.Push(pixel.V(b.X + dx, b.Y + dy + b.H))
+	imd.Push(pV(b.X + dx, b.Y + dy))
+	imd.Push(pV(b.X + dx + b.W, b.Y + dy))
+	imd.Push(pV(b.X + dx + b.W, b.Y + dy + b.H))
+	imd.Push(pV(b.X + dx, b.Y + dy + b.H))
 	imd.Polygon(0)
 
 	// draw title
-	lineHeight := atlas.LineHeight()
-	basicTxt := text.New(pixel.V(math.Floor(b.X + dx + b.W / 2), math.Floor(b.Y + dy + b.H / 2 - lineHeight / 2)), atlas)
+	lineHeight := int(atlas.LineHeight())
+	basicTxt := text.New(pV(b.X + dx + b.W / 2, b.Y + dy + b.H / 2 - lineHeight / 2), atlas)
 	basicTxt.Dot.X -= basicTxt.BoundsOf(b.Text).W() / 2
 	fmt.Fprint(basicTxt, b.Text)
 
@@ -61,7 +64,7 @@ func (b *Button) Draw(w *pixelgl.Window) {
 	basicTxt.Draw(w, pixel.IM)
 }
 
-func (b *Button) Move(dx float64, dy float64) {
+func (b *Button) Move(dx int, dy int) {
 	b.X += dx
 	b.Y += dy
 }

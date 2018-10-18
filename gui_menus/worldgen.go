@@ -12,8 +12,8 @@ var world = worldgen.NewEmptyWorld(3000, 3000)
 func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, switchWindowChannel chan interface{}) (mwin *gui.RichWindow, wid gui.WindowID) {
 	mwin = &gui.RichWindow{
 		BaseGuiWindow: gui.BaseGuiWindow{
-			W:           config.Bounds.W() - 1,
-			H:           config.Bounds.H(),
+			W:           int(config.Bounds.W()) - 1,
+			H:           int(config.Bounds.H()),
 			X:           1,
 			Y:           0,
 			Bgcolor:     colornames.White,
@@ -39,7 +39,7 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 
 	h := int(config.Bounds.H()) - int(mwin.GetTitleRectangle().Y2 - mwin.GetTitleRectangle().Y1)
 	canvas := gui.NewCanvas(mwin, h, h)
-	canvas.X = config.Bounds.W() - canvas.W
+	canvas.X = int(config.Bounds.W()) - canvas.W
 
 	mwin.Children = append(mwin.Children, &gui.Button{
 		110, 0, 100, 30,
