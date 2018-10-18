@@ -1,11 +1,9 @@
 package gui
 
 import (
-	"fmt"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	"image/color"
 )
 
@@ -55,10 +53,7 @@ func (b *Button) Draw(w *pixelgl.Window) {
 	imd.Polygon(0)
 
 	// draw title
-	lineHeight := int(atlas.LineHeight())
-	basicTxt := text.New(pV(b.X + dx + b.W / 2, b.Y + dy + b.H / 2 - lineHeight / 2), atlas)
-	basicTxt.Dot.X -= basicTxt.BoundsOf(b.Text).W() / 2
-	fmt.Fprint(basicTxt, b.Text)
+	basicTxt := DrawText(b.X + dx + b.W / 2, b.Y + dy + b.H / 2, b.Text, ALIGN_CENTER)
 
 	imd.Draw(w)
 	basicTxt.Draw(w, pixel.IM)

@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
@@ -44,10 +43,7 @@ func (m *RichWindow) Draw(w *pixelgl.Window) {
 	imd.Polygon(1)
 
 	// draw title
-	lineHeight := int(atlas.LineHeight())
-	basicTxt := text.New(pV(m.X + m.W / 2, m.Y + m.H - lineHeight), atlas)
-	basicTxt.Dot.X -= basicTxt.BoundsOf(m.Title).W() / 2
-	fmt.Fprint(basicTxt, m.Title)
+	basicTxt := DrawText(m.X + m.W / 2, m.Y + m.H, m.Title, ALIGN_BOTTOM)
 
 	// title underline
 	imd.Color = m.Bordercolor
