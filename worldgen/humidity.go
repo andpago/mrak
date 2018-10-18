@@ -6,7 +6,7 @@ import (
 )
 
 func GeneratePerlinHumidity(w *World, buf *gui.ProtectedColorBuffer, vis Visualizer) {
-	chunkNum := int(math.Ceil(float64(w.Width) / 2000))
+	chunkNum := int(math.Ceil(float64(w.Width) / 1000))
 	for y := 0; y < w.Height; y++ {
 		for x := 0; x < w.Width; x++ {
 			w.HumidityMap[y][x] = 50

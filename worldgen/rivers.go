@@ -27,7 +27,7 @@ func Shuffle(vals []Point) {
 
 
 func GenerateRivers(w *World, buf *gui.ProtectedColorBuffer, vis Visualizer) {
-	const maxRiverSurface = 1000
+	maxRiverSurface := int(1000 * (float64(w.Width) / 700) * (float64(w.Height) / 700))
 	const minRiverSurface = 20
 
 	for n := 0; n < 50; n++ {
