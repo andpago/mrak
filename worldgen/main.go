@@ -42,6 +42,7 @@ func GenerateFractalWorld(w *World, buf *gui.ProtectedColorBuffer) {
 	GenerateSimpleWaterlevel(w, buf, VisualizeWaterLevel)
 	GeneratePerlinLatitudeTemperature(w, buf, VisualizeTemerature)
 	GeneratePerlinHumidity(w, buf, VisualizeHumidity)
+	GenerateRivers(w, buf, VisualizeClimate)
 	Visualize(w, buf, VisualizeClimate)
 }
 
