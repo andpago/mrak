@@ -25,7 +25,7 @@ func GeneratePerlinElevation(w *World, buf *gui.ProtectedColorBuffer, vis Visual
 		for xChunk := 0; xChunk < chunkNum; xChunk++ {
 			for y := yChunk * chunkSizeY; y < (yChunk + 1) * chunkSizeY; y++ {
 				for x := xChunk * chunkSizeX; x < (xChunk + 1) * chunkSizeX; x++ {
-					w.ElevationMap[y][x] = 50 + 100 * float32(p.Noise2D(float64(x * scale) /
+					w.ElevationMap[y][x] = 200 + 100 * float32(p.Noise2D(float64(x * scale) /
 						float64(w.Width), float64(y * scale) / float64(w.Height)))
 				}
 			}

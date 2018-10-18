@@ -2,6 +2,7 @@ package worldgen
 
 import (
 	"github.com/andpago/mrak/gui"
+	"golang.org/x/image/colornames"
 	"image/color"
 )
 
@@ -14,9 +15,11 @@ func Visualize(w *World, buf *gui.ProtectedColorBuffer, vis Visualizer) {
 }
 
 func VisualizeElevationGrayscale(w *World, buf *gui.ProtectedColorBuffer) {
+	const maxElevation = 500
+
 	for y := 0; y < len(buf.Colors); y++ {
 		for x := 0; x < len(buf.Colors[0]); x++ {
-			gray := uint8(w.ElevationMap[y * w.Height / len(buf.Colors)][x * w.Width / len(buf.Colors[0])])
+			gray := uint8(w.ElevationMap[y * w.Height / len(buf.Colors)][x * w.Width / len(buf.Colors[0])] * 255 / maxElevation)
 			buf.Colors[y][x] = color.Gray{gray}
 		}
 	}
@@ -70,4 +73,69 @@ func VisualizeTemerature(w *World, buf *gui.ProtectedColorBuffer) {
 			}
 		}
 	}
+}
+
+func BlendRGBColorBuffers(buffers []*gui.ProtectedColorBuffer, weights []uint32) *gui.ProtectedColorBuffer {
+	if len(buffers) == 0 {
+		panic("cannot blend colors: unable to infer dimensions from no buffers")
+	}
+
+	wsum := uint32(0)
+	for _, wt := range weights {
+		wsum += wt
+	}
+
+	buffers[0].Mu.Lock()
+	H := len(buffers[0].Colors)
+	W := len(buffers[0].Colors[0])
+	R, G, B := make([][]uint32, H, H), make([][]uint32, H, H), make([][]uint32, H, H)
+	for y := 0; y < H; y++ {
+		R[y] = make([]uint32, W, W)
+		G[y] = make([]uint32, W, W)
+		B[y] = make([]uint32, W, W)
+	}
+	buffers[0].Mu.Unlock()
+
+	for i, buf := range buffers {
+		buf.Mu.Lock()
+		for y := 0; y < H; y++ {
+			for x := 0; x < W; x++ {
+				r, g, b, a := buf.Colors[y][x].RGBA()
+				const maxA = 0xffff
+				R[y][x] += (r * a)/ maxA * weights[i] / wsum
+				G[y][x] += (g * a)/ maxA * weights[i] / wsum
+				B[y][x] += (b * a)/ maxA * weights[i] / wsum
+			}
+		}
+		buf.Mu.Unlock()
+	}
+
+	res := gui.NewProtectedColorBuffer(W, H, colornames.White)
+	for y := 0; y < H; y++ {
+		for x := 0; x < W; x++ {
+			res.Colors[y][x] = color.RGBA{
+				uint8(R[y][x] * 255 / 0xffff),
+				uint8(G[y][x] * 255 / 0xffff),
+				uint8(B[y][x] * 255 / 0xffff),
+				0xff}
+		}
+	}
+
+
+	return res
+}
+
+func VisalizeAll(w *World, buf *gui.ProtectedColorBuffer) {
+	bufs := make([]*gui.ProtectedColorBuffer, 3, 3)
+
+	for i := range bufs {
+		bufs[i] = gui.NewProtectedColorBuffer(len(buf.Colors[0]), len(buf.Colors), color.Transparent)
+	}
+
+	VisualizeElevationGrayscale(w, bufs[0])
+	VisualizeTemerature(w, bufs[1])
+	VisualizeWaterLevel(w, bufs[2])
+	res := BlendRGBColorBuffers(bufs, []uint32{1, 5, 5})
+
+	buf.Colors = res.Colors
 }

@@ -14,6 +14,18 @@ type ProtectedColorBuffer struct {
 	Mu     *sync.Mutex
 }
 
+func (b *ProtectedColorBuffer) Clone() *ProtectedColorBuffer {
+	b.Mu.Lock()
+	defer b.Mu.Unlock()
+
+	W := len(b.Colors[0])
+	H := len(b.Colors)
+	res := NewProtectedColorBuffer(W, H, color.White)
+	copy(res.Colors, b.Colors)
+
+	return res
+}
+
 
 func NewProtectedColorBuffer(W int, H int, defaultColor color.Color) *ProtectedColorBuffer {
 	res := &ProtectedColorBuffer{
