@@ -7,7 +7,7 @@ import (
 )
 
 func GeneratePerlinLatitudeTemperature(w *World, buf *gui.ProtectedColorBuffer, vis Visualizer) {
-	const polarTemperature = 260
+	const polarTemperature = 200
 	const equatorialTemperature = 350
 	height := float64(w.Height)
 	width := float64(w.Width)

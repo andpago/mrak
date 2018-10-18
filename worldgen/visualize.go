@@ -54,19 +54,19 @@ func VisualizeTemerature(w *World, buf *gui.ProtectedColorBuffer) {
 			if t < greenStart {
 				// blue
 				relT := (t - 0) / (greenStart - 0)
-				buf.Colors[y][x] = color.RGBA{0, 0, uint8(relT * 255), 255}
+				buf.Colors[y][x] = color.RGBA{0, uint8(64 * relT), uint8(255 * (1 - relT)), 255}
 			} else if t < orangeStart {
 				// green
 				relT := (t - greenStart) / (orangeStart - greenStart)
-				buf.Colors[y][x] = color.RGBA{0, uint8(relT * 255), 0, 255}
+				buf.Colors[y][x] = color.RGBA{uint8(relT * 127), uint8(relT * 63) + 64, 0, 255}
 			} else if t < redStart {
 				// orange
 				relT := (t - orangeStart) / (redStart - orangeStart)
-				buf.Colors[y][x] = color.RGBA{uint8(relT * 255), uint8(relT * 127), 0, 255}
+				buf.Colors[y][x] = color.RGBA{uint8(relT * 63) + 127, uint8(relT * 63) + 128, 0, 255}
 			} else {
 				// red
 				relT := (t - redStart) / (maxTemp - redStart)
-				buf.Colors[y][x] = color.RGBA{uint8(relT * 255), 0, 0, 255}
+				buf.Colors[y][x] = color.RGBA{uint8(relT * 63) + 127 + 63, 192 - uint8(relT * 192), 0, 255}
 			}
 		}
 	}
