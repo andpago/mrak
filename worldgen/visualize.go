@@ -169,3 +169,30 @@ func VisualizeAll(w *World, buf *gui.ProtectedColorBuffer) {
 	VisualizeTemerature(w, buf)
 	VisualizeWaterLevel(w, buf)
 }
+
+func VisualizeHumidity(w *World, buf *gui.ProtectedColorBuffer) {
+	const (
+		redStart = 50
+		maxHumidity = 100
+	)
+
+
+	for y := 0; y < len(buf.Colors); y++ {
+		for x := 0; x < len(buf.Colors[0]); x++ {
+			X := x * w.Width / len(buf.Colors[0])
+			Y := y * w.Height / len(buf.Colors)
+
+			hum := w.HumidityMap[Y][X]
+
+			if hum < redStart {
+				// blue
+				relHum := (hum - 0) / (redStart - 0)
+				buf.Colors[y][x] = color.RGBA{uint8(127.0 * relHum), 0, uint8(127.0 * (1 - relHum)) , 255}
+			} else {
+				// red
+				relHum := (hum - redStart) / (maxHumidity - redStart)
+				buf.Colors[y][x] = color.RGBA{uint8(127.0 + 127.0 * relHum), 0, 0, 255}
+			}
+		}
+	}
+}

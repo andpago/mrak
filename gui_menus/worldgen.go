@@ -54,7 +54,7 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 	})
 
 	mwin.Children = append(mwin.Children, &gui.Button{
-		0, mwin.H - 50, 100, 30,
+		0, mwin.H - 50, 120, 30,
 		"Elevation map",
 		colornames.Gray,
 		2,
@@ -66,7 +66,7 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 	})
 
 	mwin.Children = append(mwin.Children, &gui.Button{
-		0, mwin.H - 85, 100, 30,
+		0, mwin.H - 85, 120, 30,
 		"Temperature map",
 		colornames.Gray,
 		2,
@@ -77,8 +77,21 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		switchWindowChannel,
 	})
 
+
 	mwin.Children = append(mwin.Children, &gui.Button{
-		0, mwin.H - 120, 100, 30,
+		0, mwin.H - 120, 120, 30,
+		"Humidity map",
+		colornames.Gray,
+		2,
+		mwin,
+		func(w chan interface{}) {
+			worldgen.Visualize(&world, canvas.Colors, worldgen.VisualizeHumidity)
+		},
+		switchWindowChannel,
+	})
+
+	mwin.Children = append(mwin.Children, &gui.Button{
+		0, mwin.H - 155, 120, 30,
 		"Final map",
 		colornames.Gray,
 		2,
@@ -88,6 +101,7 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		},
 		switchWindowChannel,
 	})
+
 
 	mwin.Children = append(mwin.Children, canvas)
 

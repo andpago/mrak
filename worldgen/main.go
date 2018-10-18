@@ -43,6 +43,7 @@ func GenerateFractalWorld(w *World, buf *gui.ProtectedColorBuffer) {
 	GenerateSimpleWaterlevel(w, buf, VisualizeWaterLevel)
 	time.Sleep(1000 * time.Millisecond)
 	GeneratePerlinLatitudeTemperature(w, buf, VisualizeTemerature)
+	GeneratePerlinHumidity(w, buf, VisualizeHumidity)
 	Visualize(w, buf, VisualizeAll)
 }
 
