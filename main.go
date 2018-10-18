@@ -13,7 +13,7 @@ import (
 
 var windowConfig = pixelgl.WindowConfig{
 	Title:  "Mrak",
-	Bounds: pixel.R(0, 0, 800, 500),
+	Bounds: pixel.R(0, 0, 800, 700),
 	VSync:  true,
 }
 

@@ -15,11 +15,27 @@ func Visualize(w *World, buf *gui.ProtectedColorBuffer, vis Visualizer) {
 }
 
 func VisualizeElevationGrayscale(w *World, buf *gui.ProtectedColorBuffer) {
-	const maxElevation = 500
+	var (
+		maxElevation = float32(0)
+		minElevation = float32(0)
+	)
+
+	for y := 0; y < w.Height; y++ {
+		for x := 0; x < w.Width; x++ {
+			el := w.ElevationMap[y][x]
+			if el > maxElevation {
+				maxElevation = el
+			}
+			if el < minElevation {
+				minElevation = el
+			}
+		}
+	}
 
 	for y := 0; y < len(buf.Colors); y++ {
 		for x := 0; x < len(buf.Colors[0]); x++ {
-			gray := uint8(w.ElevationMap[y * w.Height / len(buf.Colors)][x * w.Width / len(buf.Colors[0])] * 255 / maxElevation)
+			gray := uint8((w.ElevationMap[y * w.Height / len(buf.Colors)][x * w.Width / len(buf.Colors[0])] -
+				minElevation ) * 255 / (maxElevation - minElevation))
 			buf.Colors[y][x] = color.Gray{gray}
 		}
 	}
@@ -69,7 +85,11 @@ func VisualizeTemerature(w *World, buf *gui.ProtectedColorBuffer) {
 			} else {
 				// red
 				relT := (t - redStart) / (maxTemp - redStart)
-				buf.Colors[y][x] = color.RGBA{uint8(relT * 63) + 127 + 63, 192 - uint8(relT * 192), 0, 255}
+				buf.Colors[y][x] = color.RGBA{
+					uint8(relT * 63) + 127 + 63,
+					192 - uint8(relT * 192),
+					0,
+					255}
 			}
 		}
 	}

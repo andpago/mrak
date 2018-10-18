@@ -23,7 +23,7 @@ func GeneratePerlinLatitudeTemperature(w *World, buf *gui.ProtectedColorBuffer, 
 	seed := int64(time.Now().Nanosecond())
 	p := NewPerlin(alpha, beta, n, seed)
 
-	const chunkNum = 10
+	const chunkNum = 5
 	chunkSizeX := w.Width / chunkNum
 	chunkSizeY := w.Height / chunkNum
 

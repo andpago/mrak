@@ -9,7 +9,7 @@ import (
 type World struct {
 	Name string
 	Width, Height int // kilometers ?
-	ElevationMap [][]float32 // [y][x]
+	ElevationMap [][]float32 // [y][x] meters over the water
 	HumidityMap [][]float32
 	TemperatureMap [][]float32
 	IsWater [][]bool
