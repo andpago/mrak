@@ -26,7 +26,7 @@ func (b *Button) Click(X float64, Y float64) {
 
 func (b *Button) GetBoundaries() Rectangle {
 	return Rectangle{
-		b.X, b.X + b.W, b.Y, b.Y + b.W,
+		b.X, b.X + b.W, b.Y, b.Y + b.H,
 	}
 }
 
