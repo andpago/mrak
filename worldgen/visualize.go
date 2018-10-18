@@ -34,3 +34,40 @@ func VisualizeWaterLevel(w *World, buf *gui.ProtectedColorBuffer) {
 		}
 	}
 }
+
+func VisualizeTemerature(w *World, buf *gui.ProtectedColorBuffer) {
+	const (
+		greenStart = 270
+		orangeStart = 330
+		redStart = 370
+		maxTemp = 500
+	)
+
+
+	for y := 0; y < len(buf.Colors); y++ {
+		for x := 0; x < len(buf.Colors[0]); x++ {
+			X := x * w.Width / len(buf.Colors[0])
+			Y := y * w.Height / len(buf.Colors)
+
+			t := w.TemperatureMap[Y][X]
+
+			if t < greenStart {
+				// blue
+				relT := (t - 0) / (greenStart - 0)
+				buf.Colors[y][x] = color.RGBA{0, 0, uint8(relT * 255), 255}
+			} else if t < orangeStart {
+				// green
+				relT := (t - greenStart) / (orangeStart - greenStart)
+				buf.Colors[y][x] = color.RGBA{0, uint8(relT * 255), 0, 255}
+			} else if t < redStart {
+				// orange
+				relT := (t - orangeStart) / (redStart - orangeStart)
+				buf.Colors[y][x] = color.RGBA{uint8(relT * 255), uint8(relT * 127), 0, 255}
+			} else {
+				// red
+				relT := (t - redStart) / (maxTemp - redStart)
+				buf.Colors[y][x] = color.RGBA{uint8(relT * 255), 0, 0, 255}
+			}
+		}
+	}
+}
