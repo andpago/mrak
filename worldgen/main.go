@@ -41,7 +41,7 @@ func GenerateFractalWorld(w *World, buf *gui.ProtectedColorBuffer) {
 	GeneratePerlinElevation(w, buf, VisualizeElevationGrayscale)
 	GenerateSimpleWaterlevel(w, buf, VisualizeWaterLevel)
 	GeneratePerlinLatitudeTemperature(w, buf, VisualizeTemerature)
-	Visualize(w, buf, VisalizeAll)
+	Visualize(w, buf, VisualizeAll)
 }
 
 func GenerateInteractive(w *World, buf *gui.ProtectedColorBuffer, generator Generator) {

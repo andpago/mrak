@@ -125,7 +125,7 @@ func BlendRGBColorBuffers(buffers []*gui.ProtectedColorBuffer, weights []uint32)
 	return res
 }
 
-func VisalizeAll(w *World, buf *gui.ProtectedColorBuffer) {
+func VisualizeBlendAll(w *World, buf *gui.ProtectedColorBuffer) {
 	bufs := make([]*gui.ProtectedColorBuffer, 3, 3)
 
 	for i := range bufs {
@@ -138,4 +138,10 @@ func VisalizeAll(w *World, buf *gui.ProtectedColorBuffer) {
 	res := BlendRGBColorBuffers(bufs, []uint32{1, 5, 5})
 
 	buf.Colors = res.Colors
+}
+
+
+func VisualizeAll(w *World, buf *gui.ProtectedColorBuffer) {
+	VisualizeTemerature(w, buf)
+	VisualizeWaterLevel(w, buf)
 }
