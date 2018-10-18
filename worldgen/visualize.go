@@ -14,7 +14,7 @@ func Visualize(w *World, buf *gui.ProtectedColorBuffer, vis Visualizer) {
 	buf.Mu.Unlock()
 }
 
-func VisualizeElevationGrayscale(w *World, buf *gui.ProtectedColorBuffer) {
+func VisualizeElevationGrayscaleWithAlpha(w *World, buf *gui.ProtectedColorBuffer, alpha uint8) {
 	var (
 		maxElevation = float32(0)
 		minElevation = float32(0)
@@ -36,9 +36,13 @@ func VisualizeElevationGrayscale(w *World, buf *gui.ProtectedColorBuffer) {
 		for x := 0; x < len(buf.Colors[0]); x++ {
 			gray := uint8((w.ElevationMap[y * w.Height / len(buf.Colors)][x * w.Width / len(buf.Colors[0])] -
 				minElevation ) * 255 / (maxElevation - minElevation))
-			buf.Colors[y][x] = color.Gray{gray}
+			buf.Colors[y][x] = color.RGBA{gray, gray, gray, alpha}
 		}
 	}
+}
+
+func VisualizeElevationGrayscale(w *World, buf *gui.ProtectedColorBuffer) {
+	VisualizeElevationGrayscaleWithAlpha(w, buf, 255)
 }
 
 func VisualizeWaterLevel(w *World, buf *gui.ProtectedColorBuffer) {
@@ -192,6 +196,80 @@ func VisualizeHumidity(w *World, buf *gui.ProtectedColorBuffer) {
 				// red
 				relHum := (hum - redStart) / (maxHumidity - redStart)
 				buf.Colors[y][x] = color.RGBA{uint8(127.0 + 127.0 * relHum), 0, 0, 255}
+			}
+		}
+	}
+}
+
+func VisualizeClimate(w *World, buf *gui.ProtectedColorBuffer) {
+	for y := 0; y < len(buf.Colors); y++ {
+		for x := 0; x < len(buf.Colors[0]); x++ {
+			X := x * w.Width / len(buf.Colors[0])
+			Y := y * w.Height / len(buf.Colors)
+
+			if w.IsWater[Y][X] {
+				if w.TemperatureMap[Y][X] < 250 {
+					buf.Colors[y][x] = colornames.Aqua // ice
+				} else {
+					buf.Colors[y][x] = colornames.Blue // water
+				}
+				continue
+			}
+
+			if w.TemperatureMap[Y][X] < 250 {
+				buf.Colors[y][x] = colornames.White // polar cap
+				continue
+			}
+
+			if w.ElevationMap[Y][X] < 2 {
+				buf.Colors[y][x] = colornames.Yellow // coast
+				continue
+			}
+
+			if w.HumidityMap[Y][X] < 25 {
+				buf.Colors[y][x] = colornames.Gray // badland
+				continue
+			}
+
+			if w.ElevationMap[Y][X] > 25 {
+				buf.Colors[y][x] = colornames.Lightgreen // alpine forest
+				continue
+			}
+
+			if w.HumidityMap[Y][X] > 70 && w.ElevationMap[Y][X] < 10 {
+				buf.Colors[y][x] = colornames.Darkgreen // bog
+				continue
+			}
+
+			if w.ElevationMap[Y][X] > 30 {
+				buf.Colors[y][x] = colornames.White // mountain
+				continue
+			}
+
+			buf.Colors[y][x] = colornames.Green // temperate forest
+		}
+	}
+
+	const alpha = 100
+	alphaBuffer := gui.NewProtectedColorBuffer(len(buf.Colors[0]), len(buf.Colors), color.Transparent)
+	VisualizeElevationGrayscaleWithAlpha(w, alphaBuffer, alpha)
+
+	for y := 0; y < len(buf.Colors); y++ {
+		for x := 0; x < len(buf.Colors[0]); x++ {
+
+			r, g, b, _ := buf.Colors[y][x].RGBA()
+			r /= 255
+			g /= 255
+			b /= 255
+
+			A, _, _, _ := alphaBuffer.Colors[y][x].RGBA()
+			A /= 255
+
+			buf.Colors[y][x] = color.RGBA{
+				uint8((r * (255 - alpha) + A * alpha) / 255),
+				uint8((g * (255 - alpha) + A * alpha) / 255),
+				uint8((b * (255 - alpha) + A * alpha) / 255),
+				255,
 			}
 		}
 	}
