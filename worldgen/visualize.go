@@ -41,8 +41,8 @@ func VisualizeWaterLevel(w *World, buf *gui.ProtectedColorBuffer) {
 func VisualizeTemerature(w *World, buf *gui.ProtectedColorBuffer) {
 	const (
 		greenStart = 270
-		orangeStart = 330
-		redStart = 370
+		orangeStart = 320
+		redStart = 340
 		maxTemp = 500
 	)
 
@@ -123,6 +123,10 @@ func BlendRGBColorBuffers(buffers []*gui.ProtectedColorBuffer, weights []uint32)
 
 
 	return res
+}
+
+func NoVisualizer(w *World, buf *gui.ProtectedColorBuffer) {
+
 }
 
 func VisualizeBlendAll(w *World, buf *gui.ProtectedColorBuffer) {

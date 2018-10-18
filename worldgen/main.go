@@ -3,6 +3,7 @@ package worldgen
 import (
 	"fmt"
 	"github.com/andpago/mrak/gui"
+	"time"
 )
 
 type World struct {
@@ -40,6 +41,7 @@ type Generator func(w *World, buf *gui.ProtectedColorBuffer)
 func GenerateFractalWorld(w *World, buf *gui.ProtectedColorBuffer) {
 	GeneratePerlinElevation(w, buf, VisualizeElevationGrayscale)
 	GenerateSimpleWaterlevel(w, buf, VisualizeWaterLevel)
+	time.Sleep(1000 * time.Millisecond)
 	GeneratePerlinLatitudeTemperature(w, buf, VisualizeTemerature)
 	Visualize(w, buf, VisualizeAll)
 }
