@@ -34,6 +34,11 @@ func CalculateWaterAdjacency(w *World, buf *gui.ProtectedColorBuffer, vis Visual
 		for xChunk := 0; xChunk < chunkNum; xChunk++ {
 			for y := yChunk * chunkSizeY; y < (yChunk + 1) * chunkSizeY; y++ {
 				for x := xChunk * chunkSizeX; x < (xChunk + 1) * chunkSizeX; x++ {
+					if w.IsSea[y][x] {
+						w.WaterAdjacency[y][x] = 10
+						continue
+					}
+
 					wad = 0
 					for dx := -radius; dx <= radius; dx++ {
 						for dy := -radius; dy <= radius; dy++ {

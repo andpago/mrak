@@ -221,27 +221,31 @@ func VisualizeClimate(w *World, buf *gui.ProtectedColorBuffer) {
 				continue
 			}
 
-			if w.ElevationMap[Y][X] < 2 {
+			if w.ElevationMap[Y][X] < 20 {
 				buf.Colors[y][x] = colornames.Yellow // coast
 				continue
 			}
 
 			if w.HumidityMap[Y][X] < 25 {
-				buf.Colors[y][x] = colornames.Gray // badland
+				if w.TemperatureMap[Y][X] > 320 {
+					buf.Colors[y][x] = colornames.Yellow // desert
+				} else {
+					buf.Colors[y][x] = colornames.Gray // badlands
+				}
 				continue
 			}
 
-			if w.ElevationMap[Y][X] > 25 {
+			if w.ElevationMap[Y][X] > 1000 {
 				buf.Colors[y][x] = colornames.Lightgreen // alpine forest
 				continue
 			}
 
-			if w.HumidityMap[Y][X] > 70 && w.ElevationMap[Y][X] < 10 {
+			if w.HumidityMap[Y][X] > 70 && w.ElevationMap[Y][X] < 100 {
 				buf.Colors[y][x] = colornames.Darkgreen // bog
 				continue
 			}
 
-			if w.ElevationMap[Y][X] > 30 {
+			if w.ElevationMap[Y][X] > 1200 {
 				buf.Colors[y][x] = colornames.White // mountain
 				continue
 			}

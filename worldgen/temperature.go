@@ -15,10 +15,12 @@ func GeneratePerlinLatitudeTemperature(w *World, buf *gui.ProtectedColorBuffer, 
 
 
 	for y := 0.0; y < height; y++ {
+		latitude := math.Abs(y - semiHeight) / semiHeight // from 0 to 1
+		cosa := math.Cos(latitude * math.Pi / 2)
+		temp := float32(polarTemperature + (equatorialTemperature - polarTemperature) * cosa)
 		for x := 0; x < w.Width; x++ {
-			latitude := math.Abs(y - semiHeight) / semiHeight // from 0 to 1
-			w.TemperatureMap[int(y)][x] =
-				float32(equatorialTemperature + (polarTemperature - equatorialTemperature) * latitude)
+			w.TemperatureMap[int(y)][x] = temp
+
 		}
 	}
 	Visualize(w, buf, vis)

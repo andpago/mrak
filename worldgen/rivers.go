@@ -28,9 +28,12 @@ func Shuffle(vals []Point) {
 
 func GenerateRivers(w *World, buf *gui.ProtectedColorBuffer, vis Visualizer) {
 	maxRiverSurface := int(1000 * (float64(w.Width) / 700) * (float64(w.Height) / 700))
-	const minRiverSurface = 20
+	minRiverSurface := 20
+	totalRiverArea := int(7000 * (float64(w.Width) / 700) * (float64(w.Height) / 700))
+	riverArea := 0
+	n := 0
 
-	for n := 0; n < 50; n++ {
+	for riverArea < totalRiverArea {
 		X := rand.Intn(w.Width)
 		Y := rand.Intn(w.Height)
 
@@ -115,10 +118,11 @@ func GenerateRivers(w *World, buf *gui.ProtectedColorBuffer, vis Visualizer) {
 			for y := 0; y < w.Height; y++ {
 				copy(w.IsWater[y], initialWater[y])
 			}
-			n--
 		} else {
+			riverArea += t
+			n++
 			Visualize(w, buf, vis)
-			fmt.Printf("river %d / %d\n", n, 50)
+			fmt.Printf("river %d (area %d / %d)\n", n, riverArea, totalRiverArea)
 		}
 	}
 }
