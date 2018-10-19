@@ -7,9 +7,13 @@ import (
 
 func GenerateSimpleWaterlevel(w *World, buf *gui.ProtectedColorBuffer, vis Visualizer) {
 	const waterlevel = 0
+	hasWater := false
+
 	for y := 0; y < w.Height; y++ {
 		for x := 0; x < w.Width; x++ {
-			w.IsWater[y][x] = w.ElevationMap[y][x] < waterlevel
+			hasWater = w.ElevationMap[y][x] < waterlevel
+			w.IsWater[y][x] = hasWater
+			w.IsSea[y][x] = hasWater
 		}
 	}
 	Visualize(w, buf, vis)
@@ -41,6 +45,10 @@ func CalculateWaterAdjacency(w *World, buf *gui.ProtectedColorBuffer, vis Visual
 							}
 
 							mult = int(math.Sqrt(radius - math.Sqrt(float64(dx * dx + dy * dy))))
+							if w.IsSea[Y][X] {
+								mult /= 3
+							}
+
 							if mult < 0 {
 								continue
 							}

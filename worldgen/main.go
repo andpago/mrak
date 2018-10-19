@@ -15,6 +15,7 @@ type World struct {
 	WaterAdjacency [][]int
 	MaxWad int
 	DistanceToWater [][]int
+	IsSea [][]bool
 }
 
 func NewEmptyWorld(Width int, Height int) World {
@@ -29,6 +30,7 @@ func NewEmptyWorld(Width int, Height int) World {
 		make([][]int, Height, Height),
 		0,
 		make([][]int, Height, Height),
+		make([][]bool, Height, Height),
 	}
 
 	for y := 0; y < Height; y++ {
@@ -38,6 +40,7 @@ func NewEmptyWorld(Width int, Height int) World {
 		res.IsWater[y] = make([]bool, Width, Width)
 		res.WaterAdjacency[y] = make([]int, Width, Width)
 		res.DistanceToWater[y] = make([]int, Width, Width)
+		res.IsSea[y] = make([]bool, Width, Width)
 	}
 
 	return res
