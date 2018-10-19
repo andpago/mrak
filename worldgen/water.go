@@ -46,7 +46,7 @@ func CalculateWaterAdjacency(w *World, buf *gui.ProtectedColorBuffer, vis Visual
 
 							mult = int(math.Sqrt(radius - math.Sqrt(float64(dx * dx + dy * dy))))
 							if w.IsSea[Y][X] {
-								mult /= 3
+								mult /= 5
 							}
 
 							if mult < 0 {
