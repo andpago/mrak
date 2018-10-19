@@ -14,6 +14,7 @@ type World struct {
 	IsWater [][]bool
 	WaterAdjacency [][]int
 	MaxWad int
+	DistanceToWater [][]int
 }
 
 func NewEmptyWorld(Width int, Height int) World {
@@ -27,6 +28,7 @@ func NewEmptyWorld(Width int, Height int) World {
 		make([][]bool, Height, Height),
 		make([][]int, Height, Height),
 		0,
+		make([][]int, Height, Height),
 	}
 
 	for y := 0; y < Height; y++ {
@@ -35,6 +37,7 @@ func NewEmptyWorld(Width int, Height int) World {
 		res.TemperatureMap[y] = make([]float32, Width, Width)
 		res.IsWater[y] = make([]bool, Width, Width)
 		res.WaterAdjacency[y] = make([]int, Width, Width)
+		res.DistanceToWater[y] = make([]int, Width, Width)
 	}
 
 	return res
@@ -47,9 +50,10 @@ func GenerateFractalWorld(w *World, buf *gui.ProtectedColorBuffer) {
 	GenerateSimpleWaterlevel(w, buf, VisualizeWaterLevel)
 	GeneratePerlinLatitudeTemperature(w, buf, VisualizeTemerature)
 	GenerateRivers(w, buf, VisualizeClimate)
-	CalculateWaterAdjacency(w, buf, VisualizeWaterAdjacency)
-	GeneratePerlinWadHumidity(w, buf, VisualizeHumidity)
-	Visualize(w, buf, VisualizeClimate)
+	//CalculateWaterAdjacency(w, buf, VisualizeWaterAdjacency)
+	CalculateDistanceToWater(w, buf, VisualizeDistanceToWater)
+	//GeneratePerlinWadHumidity(w, buf, VisualizeHumidity)
+	//Visualize(w, buf, VisualizeClimate)
 }
 
 func GenerateInteractive(w *World, buf *gui.ProtectedColorBuffer, generator Generator) {

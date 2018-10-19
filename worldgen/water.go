@@ -61,3 +61,58 @@ func CalculateWaterAdjacency(w *World, buf *gui.ProtectedColorBuffer, vis Visual
 	}
 
 }
+
+func CalculateDistanceToWater(w *World, buf *gui.ProtectedColorBuffer, vis Visualizer) {
+	visited := map[Point]bool{}
+	nbrs := NewQueue(w.Width * w.Height)
+
+	for y := 0; y < w.Height; y++ {
+		for x := 0; x < w.Width; x++ {
+			if w.IsWater[y][x] {
+				w.DistanceToWater[y][x] = 0
+				visited[Point{x, y}] = true
+			} else {
+				w.DistanceToWater[y][x] = math.MaxInt32
+			}
+		}
+	}
+
+	for y := 0; y < w.Height; y++ {
+		for x := 0; x < w.Width; x++ {
+			if w.IsWater[y][x] {
+				continue
+			}
+
+			for _, p := range []Point{{x-1,y}, {x+1,y}, {x,y+1}, {x,y-1}} {
+				if p.X == -1 || p.X == w.Width || p.Y == -1 || p.Y == w.Height {
+					continue
+				}
+
+				if w.IsWater[p.Y][p.X] {
+					visited[p] = true
+					nbrs.Push(QueueValueType{p, 1})
+					break
+				}
+			}
+		}
+	}
+
+	for !nbrs.IsEmpty() {
+		p := nbrs.Pop()
+		for _, nb := range []Point{{p.X-1,p.Y}, {p.X+1,p.Y}, {p.X,p.Y+1}, {p.X,p.Y-1}} {
+			if nb.X == -1 || nb.X == w.Width || nb.Y == -1 || nb.Y == w.Height {
+				continue
+			}
+
+			if _, vis := visited[nb]; vis {
+				continue
+			}
+
+			visited[nb] = true
+			w.DistanceToWater[nb.Y][nb.X] = p.Distance + 1
+			nbrs.Push(QueueValueType{nb, p.Distance + 1})
+		}
+	}
+
+	Visualize(w, buf, vis)
+}

@@ -287,3 +287,14 @@ func VisualizeWaterAdjacency(w *World, buf *gui.ProtectedColorBuffer) {
 		}
 	}
 }
+
+func VisualizeDistanceToWater(w *World, buf *gui.ProtectedColorBuffer) {
+	for y := 0; y < len(buf.Colors); y++ {
+		for x := 0; x < len(buf.Colors[0]); x++ {
+			X := x * w.Width / len(buf.Colors[0])
+			Y := y * w.Height / len(buf.Colors)
+
+			buf.Colors[y][x] = color.Gray{uint8(float64(w.DistanceToWater[Y][X]))}
+		}
+	}
+}
