@@ -12,6 +12,8 @@ type World struct {
 	HumidityMap [][]float32
 	TemperatureMap [][]float32
 	IsWater [][]bool
+	WaterAdjacency [][]int
+	MaxWad int
 }
 
 func NewEmptyWorld(Width int, Height int) World {
@@ -23,6 +25,8 @@ func NewEmptyWorld(Width int, Height int) World {
 		make([][]float32, Height, Height),
 		make([][]float32, Height, Height),
 		make([][]bool, Height, Height),
+		make([][]int, Height, Height),
+		0,
 	}
 
 	for y := 0; y < Height; y++ {
@@ -30,6 +34,7 @@ func NewEmptyWorld(Width int, Height int) World {
 		res.HumidityMap[y] = make([]float32, Width, Width)
 		res.TemperatureMap[y] = make([]float32, Width, Width)
 		res.IsWater[y] = make([]bool, Width, Width)
+		res.WaterAdjacency[y] = make([]int, Width, Width)
 	}
 
 	return res
@@ -41,8 +46,9 @@ func GenerateFractalWorld(w *World, buf *gui.ProtectedColorBuffer) {
 	GeneratePerlinElevation(w, buf, VisualizeElevationGrayscale)
 	GenerateSimpleWaterlevel(w, buf, VisualizeWaterLevel)
 	GeneratePerlinLatitudeTemperature(w, buf, VisualizeTemerature)
-	GeneratePerlinHumidity(w, buf, VisualizeHumidity)
 	GenerateRivers(w, buf, VisualizeClimate)
+	CalculateWaterAdjacency(w, buf, VisualizeWaterAdjacency)
+	GeneratePerlinWadHumidity(w, buf, VisualizeHumidity)
 	Visualize(w, buf, VisualizeClimate)
 }
 

@@ -7,7 +7,7 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-var world = worldgen.NewEmptyWorld(1100, 1100)
+var world = worldgen.NewEmptyWorld(700, 700)
 
 func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, switchWindowChannel chan interface{}) (mwin *gui.RichWindow, wid gui.WindowID) {
 	mwin = &gui.RichWindow{

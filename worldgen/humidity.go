@@ -15,3 +15,19 @@ func GeneratePerlinHumidity(w *World, buf *gui.ProtectedColorBuffer, vis Visuali
 	AddNoise(w.HumidityMap, 2, 2, 3, 2, 50, chunkNum, func(){Visualize(w, buf, vis)})
 	//AddNoise(w.HumidityMap, 2, 2, 3, 10, 10, 5, func(){Visualize(w, buf, vis)})
 }
+
+
+func GeneratePerlinWadHumidity(w *World, buf *gui.ProtectedColorBuffer, vis Visualizer) {
+	GeneratePerlinHumidity(w, buf, vis)
+
+	for y := 0; y < w.Height; y++ {
+		for x := 0; x < w.Width; x++ {
+			w.HumidityMap[y][x] += 100.0 * (float32(w.WaterAdjacency[y][x]) / float32(w.MaxWad))
+			if w.HumidityMap[y][x] > 100 {
+				w.HumidityMap[y][x] = 100
+			}
+		}
+	}
+
+	Visualize(w, buf, vis)
+}
