@@ -53,7 +53,7 @@ func (b *Button) Draw(w *pixelgl.Window) {
 	imd.Polygon(0)
 
 	// draw title
-	basicTxt := DrawText(b.X + dx + b.W / 2, b.Y + dy + b.H / 2, b.Text, ALIGN_CENTER)
+	basicTxt := DrawText(b.X + dx + b.W / 2, b.Y + dy + b.H / 2, b.Text, ALIGN_CENTER, ALIGN_CENTER)
 
 	imd.Draw(w)
 	basicTxt.Draw(w, pixel.IM)

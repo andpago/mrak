@@ -43,7 +43,7 @@ func (m *RichWindow) Draw(w *pixelgl.Window) {
 	imd.Polygon(1)
 
 	// draw title
-	basicTxt := DrawText(m.X + m.W / 2, m.Y + m.H, m.Title, ALIGN_BOTTOM)
+	basicTxt := DrawText(m.X + m.W / 2, m.Y + m.H, m.Title, ALIGN_BOTTOM, ALIGN_CENTER)
 
 	// title underline
 	imd.Color = m.Bordercolor

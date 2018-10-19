@@ -26,18 +26,20 @@ func (b BaseGuiWindow) GetZindex() int {
 	return b.Zindex
 }
 
-type TextVerticalAlign int
+type TextAlign int
 
 const (
-	ALIGN_CENTER TextVerticalAlign = iota
-	ALIGN_TOP TextVerticalAlign = iota
-	ALIGN_BOTTOM TextVerticalAlign = iota
+	ALIGN_CENTER TextAlign = iota
+	ALIGN_TOP    TextAlign = iota
+	ALIGN_BOTTOM TextAlign = iota
+	ALIGN_LEFT   TextAlign = iota
+	ALIGN_RIGHT  TextAlign = iota
 )
 
-func DrawText(x, y int, txt string, align TextVerticalAlign) *text.Text {
+func DrawText(x, y int, txt string, verticalAlign TextAlign, horizontalAlign TextAlign) *text.Text {
 	lineHeight := int(atlas.LineHeight())
 
-	switch align {
+	switch verticalAlign {
 	case ALIGN_CENTER:
 		y -= lineHeight / 2
 	case ALIGN_BOTTOM:
@@ -47,7 +49,15 @@ func DrawText(x, y int, txt string, align TextVerticalAlign) *text.Text {
 	}
 
 	basicTxt := text.New(pV(x, y), atlas)
-	basicTxt.Dot.X -= math.Floor(basicTxt.BoundsOf(txt).W() / 2)
+	switch horizontalAlign {
+	case ALIGN_LEFT:
+	case ALIGN_CENTER:
+		basicTxt.Dot.X -= math.Floor(basicTxt.BoundsOf(txt).W() / 2)
+	case ALIGN_RIGHT:
+		basicTxt.Dot.X -= math.Floor(basicTxt.BoundsOf(txt).W())
+
+	}
+
 	fmt.Fprint(basicTxt, txt)
 
 	return basicTxt

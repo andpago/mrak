@@ -45,21 +45,29 @@ func NewEmptyWorld(Width int, Height int) World {
 
 type Generator func(w *World, buf *gui.ProtectedColorBuffer)
 
-func GenerateFractalWorld(w *World, buf *gui.ProtectedColorBuffer) {
+func GenerateFractalWorld(w *World, buf *gui.ProtectedColorBuffer, upd func(msg string)) {
+	upd("generating perlin elevation")
 	GeneratePerlinElevation(w, buf, VisualizeElevationGrayscale)
+	upd("generating water lever")
 	GenerateSimpleWaterlevel(w, buf, VisualizeWaterLevel)
+	upd("generating temperature")
 	GeneratePerlinLatitudeTemperature(w, buf, VisualizeTemerature)
+	upd("running rivers")
 	GenerateRivers(w, buf, VisualizeClimate)
-	//CalculateWaterAdjacency(w, buf, VisualizeWaterAdjacency)
+	upd("calculating water adjacency")
+	CalculateWaterAdjacency(w, buf, VisualizeWaterAdjacency)
+	upd("generating distance to warer")
 	CalculateDistanceToWater(w, buf, VisualizeDistanceToWater)
-	//GeneratePerlinWadHumidity(w, buf, VisualizeHumidity)
-	//Visualize(w, buf, VisualizeClimate)
+	upd("generating humidity")
+	GeneratePerlinWadHumidity(w, buf, VisualizeHumidity)
+	Visualize(w, buf, VisualizeClimate)
+	upd("done!")
 }
 
-func GenerateInteractive(w *World, buf *gui.ProtectedColorBuffer, generator Generator) {
+func GenerateInteractive(w *World, buf *gui.ProtectedColorBuffer, upd func(msg string)) {
 	go func(){
 		fmt.Println("generating world")
 		defer fmt.Println("world generated")
-		generator(w, buf)
+		GenerateFractalWorld(w, buf, upd)
 	}()
 }

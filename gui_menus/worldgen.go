@@ -25,6 +25,8 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		Children:      []gui.Clickable{},
 	}
 
+	label := gui.NewLabel(mwin.W - 1, mwin.H - 20, "Hello label", mwin, gui.ALIGN_CENTER, gui.ALIGN_RIGHT)
+
 	mwin.Children = append(mwin.Children, &gui.Button{
 		0, 0, 100, 30,
 		"back",
@@ -48,7 +50,7 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		2,
 		mwin,
 		func(w chan interface{}) {
-			worldgen.GenerateInteractive(&world, canvas.Colors, worldgen.GenerateFractalWorld)
+			worldgen.GenerateInteractive(&world, canvas.Colors, func(msg string){label.SetText(msg)})
 		},
 		switchWindowChannel,
 	})
@@ -113,6 +115,10 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		},
 		switchWindowChannel,
 	})
+
+
+
+	mwin.Children = append(mwin.Children, label)
 
 
 	mwin.Children = append(mwin.Children, canvas)
