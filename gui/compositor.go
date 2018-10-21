@@ -2,8 +2,11 @@ package gui
 
 import (
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
+	"golang.org/x/image/colornames"
 	"sort"
+	"sync"
 )
 
 type Compositor struct {
@@ -11,6 +14,8 @@ type Compositor struct {
 	Windows map[WindowID]Drawable
 	win     *pixelgl.Window
 	Dnd     DragNDrop
+	btnLock *sync.Mutex
+	buttonsLocked bool
 }
 
 func (c *Compositor) DestroyAllWindows() {
@@ -53,6 +58,21 @@ func (c *Compositor) DrawAllWindows() {
 			c.Windows[wid].Draw(c.win)
 		}
 	}
+
+	if c.buttonsLocked {
+		bounds := c.win.Bounds()
+
+		imd := imdraw.New(nil)
+		imd.Color = colornames.Red
+
+		imd.Push(pixel.Vec{0, 0})
+		imd.Push(pixel.Vec{bounds.W(), 0})
+		imd.Push(pixel.Vec{bounds.W(), bounds.H()})
+		imd.Push(pixel.Vec{0, bounds.H()})
+
+		imd.Rectangle(2)
+		imd.Draw(c.win)
+	}
 }
 
 func (c *Compositor) GetWindowTitleAt(vec pixel.Vec) *RichWindow {
@@ -88,6 +108,8 @@ func NewCompositor(win *pixelgl.Window) Compositor {
 		Windows: map[WindowID]Drawable{},
 		win:     win,
 		Dnd:     DragNDrop{Initiated: false},
+		btnLock: &sync.Mutex{},
+		buttonsLocked: false,
 	}
 }
 
@@ -117,7 +139,25 @@ func (c *Compositor) GetWindowAt(vec pixel.Vec) *RichWindow {
 	return nil
 }
 
+func (c *Compositor) LockAllButtons() {
+	c.btnLock.Lock()
+	defer c.btnLock.Unlock()
+
+	c.buttonsLocked = true
+}
+
+func (c *Compositor) UnlockAllButtons() {
+	c.btnLock.Lock()
+	defer c.btnLock.Unlock()
+
+	c.buttonsLocked = false
+}
+
 func (c *Compositor) CheckButtons() {
+	if c.buttonsLocked {
+		return
+	}
+
 	if !c.win.JustReleased(pixelgl.MouseButtonLeft) {
 		return
 	}

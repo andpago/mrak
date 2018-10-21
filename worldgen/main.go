@@ -115,7 +115,7 @@ func GenerateFractalWorld(w *World, buf *gui.ProtectedColorBuffer, upd func(msg 
 }
 
 func GenerateInteractive(w *World, buf *gui.ProtectedColorBuffer, upd func(msg string)) {
-	go func(){
+	func(){
 		fmt.Println("generating world")
 		defer fmt.Println("world generated")
 		GenerateFractalWorld(w, buf, upd)

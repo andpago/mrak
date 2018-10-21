@@ -7,6 +7,14 @@ import (
 	"golang.org/x/image/colornames"
 )
 
+func exclusively(c *gui.Compositor, f func(chan interface{})) func(chan interface{}) {
+	return func(ch chan interface{}) {
+		c.LockAllButtons()
+		f(ch)
+		c.UnlockAllButtons()
+	}
+}
+
 func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, switchWindowChannel chan interface{}) (mwin *gui.RichWindow, wid gui.WindowID) {
 	mwin = &gui.RichWindow{
 		BaseGuiWindow: gui.BaseGuiWindow{
@@ -47,9 +55,9 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		colornames.Gray,
 		2,
 		mwin,
-		func(w chan interface{}) {
+		exclusively(comp, func(w chan interface{}) {
 			worldgen.GenerateInteractive(&worldgen.TheWorld, canvas.Colors, func(msg string){label.SetText(msg)})
-		},
+		}),
 		switchWindowChannel,
 	})
 
@@ -121,9 +129,9 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		colornames.Gray,
 		2,
 		mwin,
-		func(w chan interface{}) {
+		exclusively(comp, func(w chan interface{}) {
 			worldgen.TheWorld.Save("world.bin")
-		},
+		}),
 		switchWindowChannel,
 	})
 
@@ -133,9 +141,10 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		colornames.Gray,
 		2,
 		mwin,
-		func(w chan interface{}) {
+		exclusively(comp, func(w chan interface{}) {
 			worldgen.TheWorld.Load("world.bin")
-		},
+			worldgen.Visualize(&worldgen.TheWorld, canvas.Colors, worldgen.VisualizeClimate)
+		}),
 		switchWindowChannel,
 	})
 
