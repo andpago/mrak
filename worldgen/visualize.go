@@ -278,6 +278,9 @@ func VisualizeClimate(w *World, buf *gui.ProtectedColorBuffer) {
 			}
 		}
 	}
+
+	VisualizeContinents(w, buf)
+	VisualizeSeas(w, buf)
 }
 
 func VisualizeWaterAdjacency(w *World, buf *gui.ProtectedColorBuffer) {
@@ -305,8 +308,6 @@ func VisualizeDistanceToWater(w *World, buf *gui.ProtectedColorBuffer) {
 }
 
 func VisualizeContinents(w *World, buf *gui.ProtectedColorBuffer) {
-	VisualizeClimate(w, buf)
-
 	colors := []color.Color{
 		colornames.Red,
 		colornames.Green,
@@ -322,11 +323,36 @@ func VisualizeContinents(w *World, buf *gui.ProtectedColorBuffer) {
 			X := p.X * len(buf.Colors[0]) / w.Width
 			Y := p.Y * len(buf.Colors) / w.Height
 
-			//fmt.Println(X, Y)
-
-			buf.Colors[Y][X] = colors[i % len(colors)]
+			if (X - Y + w.Height) % 10 < 8 {
+				buf.Colors[Y][X] = colors[i % len(colors)]
+			}
 		}
 	}
 
 	fmt.Println("continents drawn")
+}
+
+func VisualizeSeas(w *World, buf *gui.ProtectedColorBuffer) {
+	colors := []color.Color{
+		colornames.Red,
+		colornames.Green,
+		colornames.Blue,
+		colornames.Black,
+		colornames.White,
+		colornames.Yellow,
+		colornames.Violet,
+	}
+
+	for i, c := range w.Seas {
+		for _, p := range c.Points {
+			X := p.X * len(buf.Colors[0]) / w.Width
+			Y := p.Y * len(buf.Colors) / w.Height
+
+			if (X + Y) % 10 < 8 {
+				buf.Colors[Y][X] = colors[i % len(colors)]
+			}
+		}
+	}
+
+	fmt.Println("seas drawn")
 }
