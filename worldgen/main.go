@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var TheWorld = NewEmptyWorld(300, 300)
+var TheWorld = NewEmptyWorld(700, 700)
 
 type World struct {
 	Name string
@@ -20,6 +20,9 @@ type World struct {
 	MaxWad int
 	DistanceToWater [][]int
 	IsSea [][]bool
+
+	// entities
+	Continets []Continent
 }
 
 func (w *World) Save(filename string) error {
@@ -78,6 +81,7 @@ func NewEmptyWorld(Width int, Height int) World {
 		0,
 		make([][]int, Height, Height),
 		make([][]bool, Height, Height),
+		[]Continent{},
 	}
 
 	for y := 0; y < Height; y++ {
@@ -102,15 +106,16 @@ func GenerateFractalWorld(w *World, buf *gui.ProtectedColorBuffer, upd func(msg 
 	GenerateSimpleWaterlevel(w, buf, VisualizeWaterLevel)
 	upd("generating temperature")
 	GeneratePerlinLatitudeTemperature(w, buf, VisualizeTemerature)
-	upd("running rivers")
-	GenerateRivers(w, buf, VisualizeClimate)
-	upd("calculating water adjacency")
-	CalculateWaterAdjacency(w, buf, VisualizeWaterAdjacency)
-	upd("generating distance to warer")
-	CalculateDistanceToWater(w, buf, VisualizeDistanceToWater)
+	//upd("running rivers")
+	//GenerateRivers(w, buf, VisualizeClimate)
+	//upd("calculating water adjacency")
+	//CalculateWaterAdjacency(w, buf, VisualizeWaterAdjacency)
+	//upd("generating distance to warer")
+	//CalculateDistanceToWater(w, buf, VisualizeDistanceToWater)
 	upd("generating humidity")
 	GeneratePerlinWadHumidity(w, buf, VisualizeHumidity)
-	Visualize(w, buf, VisualizeClimate)
+	w.FindContinents()
+	Visualize(w, buf, VisualizeContinents)
 	upd("done!")
 }
 

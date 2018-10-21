@@ -1,6 +1,7 @@
 package worldgen
 
 import (
+	"fmt"
 	"github.com/andpago/mrak/gui"
 	"golang.org/x/image/colornames"
 	"image/color"
@@ -301,4 +302,31 @@ func VisualizeDistanceToWater(w *World, buf *gui.ProtectedColorBuffer) {
 			buf.Colors[y][x] = color.Gray{uint8(float64(w.DistanceToWater[Y][X]))}
 		}
 	}
+}
+
+func VisualizeContinents(w *World, buf *gui.ProtectedColorBuffer) {
+	VisualizeClimate(w, buf)
+
+	colors := []color.Color{
+		colornames.Red,
+		colornames.Green,
+		colornames.Blue,
+		colornames.Black,
+		colornames.White,
+		colornames.Yellow,
+		colornames.Violet,
+	}
+
+	for i, c := range w.Continets {
+		for _, p := range c.Points {
+			X := p.X * len(buf.Colors[0]) / w.Width
+			Y := p.Y * len(buf.Colors) / w.Height
+
+			//fmt.Println(X, Y)
+
+			buf.Colors[Y][X] = colors[i % len(colors)]
+		}
+	}
+
+	fmt.Println("continents drawn")
 }

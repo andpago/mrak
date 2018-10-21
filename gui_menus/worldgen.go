@@ -100,12 +100,12 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 
 	mwin.Children = append(mwin.Children, &gui.Button{
 		0, mwin.H - 155, 120, 30,
-		"Climate map",
+		"Climate + continents",
 		colornames.Gray,
 		2,
 		mwin,
 		func(w chan interface{}) {
-			worldgen.Visualize(&worldgen.TheWorld, canvas.Colors, worldgen.VisualizeClimate)
+			worldgen.Visualize(&worldgen.TheWorld, canvas.Colors, worldgen.VisualizeContinents)
 		},
 		switchWindowChannel,
 	})
