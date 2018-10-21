@@ -7,8 +7,6 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-var world = worldgen.NewEmptyWorld(3000, 3000)
-
 func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, switchWindowChannel chan interface{}) (mwin *gui.RichWindow, wid gui.WindowID) {
 	mwin = &gui.RichWindow{
 		BaseGuiWindow: gui.BaseGuiWindow{
@@ -50,7 +48,7 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		2,
 		mwin,
 		func(w chan interface{}) {
-			worldgen.GenerateInteractive(&world, canvas.Colors, func(msg string){label.SetText(msg)})
+			worldgen.GenerateInteractive(&worldgen.TheWorld, canvas.Colors, func(msg string){label.SetText(msg)})
 		},
 		switchWindowChannel,
 	})
@@ -62,7 +60,7 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		2,
 		mwin,
 		func(w chan interface{}) {
-			worldgen.Visualize(&world, canvas.Colors, worldgen.VisualizeElevationGrayscale)
+			worldgen.Visualize(&worldgen.TheWorld, canvas.Colors, worldgen.VisualizeElevationGrayscale)
 		},
 		switchWindowChannel,
 	})
@@ -74,7 +72,7 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		2,
 		mwin,
 		func(w chan interface{}) {
-			worldgen.Visualize(&world, canvas.Colors, worldgen.VisualizeTemerature)
+			worldgen.Visualize(&worldgen.TheWorld, canvas.Colors, worldgen.VisualizeTemerature)
 		},
 		switchWindowChannel,
 	})
@@ -87,7 +85,7 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		2,
 		mwin,
 		func(w chan interface{}) {
-			worldgen.Visualize(&world, canvas.Colors, worldgen.VisualizeHumidity)
+			worldgen.Visualize(&worldgen.TheWorld, canvas.Colors, worldgen.VisualizeHumidity)
 		},
 		switchWindowChannel,
 	})
@@ -99,7 +97,7 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		2,
 		mwin,
 		func(w chan interface{}) {
-			worldgen.Visualize(&world, canvas.Colors, worldgen.VisualizeClimate)
+			worldgen.Visualize(&worldgen.TheWorld, canvas.Colors, worldgen.VisualizeClimate)
 		},
 		switchWindowChannel,
 	})
@@ -111,10 +109,36 @@ func CreateWorldGenMenu(config *pixelgl.WindowConfig, comp *gui.Compositor, swit
 		2,
 		mwin,
 		func(w chan interface{}) {
-			worldgen.Visualize(&world, canvas.Colors, worldgen.VisualizeAll)
+			worldgen.Visualize(&worldgen.TheWorld, canvas.Colors, worldgen.VisualizeAll)
 		},
 		switchWindowChannel,
 	})
+
+
+	mwin.Children = append(mwin.Children, &gui.Button{
+		0, mwin.H - 225, 120, 30,
+		"Save world",
+		colornames.Gray,
+		2,
+		mwin,
+		func(w chan interface{}) {
+			worldgen.TheWorld.Save("world.bin")
+		},
+		switchWindowChannel,
+	})
+
+	mwin.Children = append(mwin.Children, &gui.Button{
+		0, mwin.H - 260, 120, 30,
+		"Load world",
+		colornames.Gray,
+		2,
+		mwin,
+		func(w chan interface{}) {
+			worldgen.TheWorld.Load("world.bin")
+		},
+		switchWindowChannel,
+	})
+
 
 
 

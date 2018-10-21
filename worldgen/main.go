@@ -1,9 +1,13 @@
 package worldgen
 
 import (
+	"encoding/gob"
 	"fmt"
 	"github.com/andpago/mrak/gui"
+	"os"
 )
+
+var TheWorld = NewEmptyWorld(300, 300)
 
 type World struct {
 	Name string
@@ -17,6 +21,49 @@ type World struct {
 	DistanceToWater [][]int
 	IsSea [][]bool
 }
+
+func (w *World) Save(filename string) error {
+	f, e := os.Create(filename)
+	defer f.Close()
+
+	if e != nil {
+		fmt.Println("could not create file:", e)
+		return e
+	}
+
+	enc := gob.NewEncoder(f)
+	err := enc.Encode(w)
+
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("world saved to", filename)
+	}
+
+	return err
+}
+
+func (w *World) Load(filename string) error {
+	f, e := os.Open(filename)
+	defer f.Close()
+
+	if e != nil {
+		fmt.Println("could not open file:", e)
+		return e
+	}
+
+	enc := gob.NewDecoder(f)
+	err := enc.Decode(w)
+
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("world loaded from", filename)
+	}
+
+	return err
+}
+
 
 func NewEmptyWorld(Width int, Height int) World {
 	res := World {
